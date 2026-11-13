@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "id": "mrclaro.bt-audio-fixer",
+  "name": "Bluetooth Audio Fixer",
+  "version": "1.0.0",
+  "author": "MrClaro",
+  "license": "MIT",
+  "homepage": "https://github.com/MrClaro/mrclaro.bt-audio-fixer",
+  "description": "Universal fix for dual-mode Bluetooth headphones stuck on BLE: forces BR/EDR discovery, re-pairs audio profiles, and resets the Bluetooth stack.",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "Panel.qml"
+  },
+  "barWidget": {
+    "displayName": "Bluetooth Audio Fixer",
+    "description": "Fixes dual-mode Bluetooth headphones that only show up as BLE or fail A2DP connection.",
+    "category": "Audio",
+    "allowMultiple": false,
+    "defaultSection": "right",
+    "defaults": {
+      "scanTimeoutSec": 5,
+      "smartFallback": true,
+      "autoHealBle": true,
+      "switchAudioOutput": true,
+      "preferredDevice": ""
+    },
+    "schema": [
+      {
+        "key": "scanTimeoutSec",
+        "type": "integer",
+        "label": "BR/EDR scan duration (seconds)",
+        "description": "How long to scan on the BR/EDR (Classic Audio) transport when discovering or re-pairing headphones.",
+        "min": 2,
+        "max": 30,
+        "step": 1,
+        "defaultValue": 5
+      },
+      {
+        "key": "smartFallback",
+        "type": "boolean",
+        "label": "Auto-repair when stuck on BLE",
+        "description": "If a normal connection fails or lands on BLE without an Audio Sink (A2DP), automatically re-pair over BR/EDR.",
+        "defaultValue": true
+      },
+      {
+        "key": "autoHealBle",
+        "type": "boolean",
+        "label": "Background BLE auto-heal",
+        "description": "Automatically trigger a BR/EDR re-pair in the background when a headphone connects in BLE-only mode.",
+        "defaultValue": true
+      },
+      {
+        "key": "switchAudioOutput",
+        "type": "boolean",
+        "label": "Set as default audio output on connect",
+        "description": "Automatically switch PipeWire default output to the headphone once connected.",
+        "defaultValue": true
+      },
+      {
+        "key": "preferredDevice",
+        "type": "string",
+        "label": "Preferred device MAC (optional)",
+        "description": "Optional MAC address for right-click quick connect. Leave empty to use the last selected or active audio device.",
+        "defaultValue": ""
+      }
+    ]
+  }
+}
