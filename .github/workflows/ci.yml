@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-and-lint:
+    name: Model, Wiring, QML, and Shell Checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Qt6 QML tools, jq, and shellcheck
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq qt6-declarative-dev-tools shellcheck jq
+
+      - name: Validate manifest structure
+        run: |
+          jq -e '
+            .schemaVersion == 1 and
+            (.id == "mrclaro.bt-audio-fixer") and
+            (.kinds | index("bar-widget") != null) and
+            (.entryPoints.barWidget == "Panel.qml")
+          ' manifest.json
+          test -f "$(jq -r .entryPoints.barWidget manifest.json)"
+
+      - name: Run Model unit and security regression tests
+        run: node tests/model.test.js
+
+      - name: Run cross-file wiring and i18n parity tests
+        run: node tests/wiring.test.js
+
+      - name: Lint shell helper with shellcheck
+        run: shellcheck scripts/bt-audio-ctl.sh
+
+      - name: Parse QML files with qmlformat
+        run: |
+          export PATH=/usr/lib/qt6/bin:$PATH
+          for f in PlainText.qml Panel.qml; do
+            qmlformat "$f" >/dev/null
+            echo "$f parses cleanly"
+          done
