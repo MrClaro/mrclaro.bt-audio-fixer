@@ -122,6 +122,18 @@ Settings can be customized on the widget entry inside `~/.config/omarchy/shell.j
 
 ---
 
+## External Dependencies & Permissions
+
+All dependencies come pre-installed on standard Omarchy / Arch Linux systems:
+- **`bluez-utils` (`bluetoothctl`):** Used to query Bluetooth device records, scan over `BR/EDR`, pair, trust, and connect.
+- **`coreutils` (`timeout`):** Bounds every `bluetoothctl` call so a unresponsive controller never hangs the shell.
+- **`kmod` (`modprobe`) & `polkit` (`pkexec`) / `sudo` *(Optional — only for Action 3 "Reset USB Stack")*:** Reloading the `btusb` kernel module (`modprobe -r btusb && modprobe btusb`) requires root privileges and prompts via Polkit (`pkexec`) unless passwordless `sudo` is configured. All other actions (**Smart Connect**, **Force BR/EDR Re-pair**, **Scan Classic Audio**, **Disconnect**, and **Auto-Heal**) run entirely in user space without elevated privileges.
+- **`omarchy-bluetooth-power` *(Optional)*:** Used if present on Omarchy to unblock/power on the Bluetooth radio before `bluetoothctl power on`.
+
+The plugin does not modify user configuration files on its own; enabling or disabling it is managed exclusively through `omarchy plugin`.
+
+---
+
 ## Development & Tests
 
 ```bash
@@ -136,6 +148,10 @@ omarchy plugin validate .
 ```
 
 The plugin ships with live translations in `i18n/` (`en.json`, `pt-BR.json`, `pt.json`) following Omarchy's language setting without requiring a shell restart.
+
+## License
+
+Released under the [MIT License](LICENSE).
 
 ---
 
